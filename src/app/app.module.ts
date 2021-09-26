@@ -8,6 +8,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AngularFireModule  } from '@angular/fire/compat';
 import { environment } from '../environments/environment';
 
+import { PERSISTENCE  } from '@angular/fire/compat/auth';
+
 @NgModule({
   declarations: [
     AppComponent
@@ -18,7 +20,9 @@ import { environment } from '../environments/environment';
     BrowserAnimationsModule,
     AngularFireModule.initializeApp(environment.firebase)
   ],
-  providers: [],
+  providers: [
+    { provide: PERSISTENCE, useValue: 'local'  },
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
