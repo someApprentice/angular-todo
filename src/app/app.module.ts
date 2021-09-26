@@ -10,6 +10,8 @@ import { environment } from '../environments/environment';
 
 import { PERSISTENCE  } from '@angular/fire/compat/auth';
 
+import { MatToolbarModule } from '@angular/material/toolbar';
+
 @NgModule({
   declarations: [
     AppComponent
@@ -18,7 +20,8 @@ import { PERSISTENCE  } from '@angular/fire/compat/auth';
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    AngularFireModule.initializeApp(environment.firebase)
+    AngularFireModule.initializeApp(environment.firebase),
+    MatToolbarModule,
   ],
   providers: [
     { provide: PERSISTENCE, useValue: 'local'  },
