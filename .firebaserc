@@ -1,0 +1,11 @@
+{
+  "targets": {
+    "angular-todo-c1153": {
+      "hosting": {
+        "angular-todo": [
+          "angular-todo-c1153"
+        ]
+      }
+    }
+  }
+}
