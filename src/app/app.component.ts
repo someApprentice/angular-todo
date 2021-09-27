@@ -1,11 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 
-import { AngularFireAuth  } from '@angular/fire/compat/auth';
-import firebase from 'firebase/compat/app';
-import { User } from 'firebase/auth';
+import { User, UserCredential } from 'firebase/auth'
 
-import { Subscription } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { FirebaseService } from './services/firebase.service';
+
+import { Subscription, of } from 'rxjs';
+import { first, tap, switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -17,22 +17,22 @@ export class AppComponent implements OnInit {
 
   user$?: Subscription;
 
-  constructor(public auth: AngularFireAuth) {
+  constructor(public firebaseService: FirebaseService) {
   }
 
   ngOnInit() {
-    this.user$ = this.auth.user.pipe(
-      tap(user => {
+    this.user$ = this.firebaseService.onAuthStateChanged().pipe(
+      switchMap((user: User|null) => {
         if (!user) {
-          this.auth.signInAnonymously()
+          return this.firebaseService.signInAnonymously();
         }
-      }) 
+
+        return of(user);
+      }),
     ).subscribe();
   }
 
   ngOnDestroy() {
-    if (this.user$) {
-      this.user$.unsubscribe();
-    }
+    this.user$!.unsubscribe();
   }
 }
