@@ -13,7 +13,7 @@ import { first, tap, switchMap } from 'rxjs/operators';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  title = 'angular-todo';
+  title = 'Angular-Todo';
 
   user$?: Subscription;
 
@@ -21,7 +21,7 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.user$ = this.firebaseService.onAuthStateChanged().pipe(
+    this.user$ = this.firebaseService.onAuthStateChanged$.pipe(
       switchMap((user: User|null) => {
         if (!user) {
           return this.firebaseService.signInAnonymously();

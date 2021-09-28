@@ -1,0 +1,52 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <mat-form-field class="title" appearance="fill">
+    <mat-label>Title</mat-label>
+    <input
+      formControlName="title"
+      matInput
+      [errorStateMatcher]=matcher
+      placeholder="Title"
+      required
+    >
+  </mat-form-field>
+
+  <div formArrayName="items" class="items">
+    <mat-form-field
+      *ngFor="let item of items.controls; let i = index"
+      class="item"
+      appearance="fill"
+    >
+      <mat-label>Item</mat-label>
+      <input
+        [formControlName]="i"
+        matInput
+        [errorStateMatcher]=matcher
+        placeholder="Item"
+      >
+    </mat-form-field>
+
+    <button (click)="addItem()" mat-button type="button" class="add-item-button">
+      <mat-icon matPrefix class="add-item-icon">add</mat-icon>
+      <span>Add item</span>
+    </button>
+  </div>
+
+  <button
+    [disabled]="form.invalid || !(user$ | async)?.uid"
+    mat-raised-button
+    color="primary"
+    type="submit"
+    class="submit-button"
+  >
+    Create
+  </button>
+
+  <button
+    (click)="clear()"
+    mat-stroked-button
+    type="button"
+    class="clear-button"
+  >
+    Clear
+  </button>
+</form>

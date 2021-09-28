@@ -1,0 +1,65 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <mat-form-field class="title" appearance="fill">
+    <mat-label>Title</mat-label>
+    <input
+      formControlName="title"
+      matInput
+      [errorStateMatcher]=matcher
+      placeholder="Title"
+      required
+    >
+  </mat-form-field>
+
+  <div formArrayName="items" class="items">
+    <form
+      *ngFor="let item of items.controls; let i = index"
+      [formGroupName]=i
+      class="item"
+    >
+      <mat-checkbox formControlName="completed" class="completed"></mat-checkbox> 
+      <mat-form-field
+        appearance="fill"
+        class="name"
+      >
+        <mat-label>Item</mat-label>
+        <input
+          formControlName="name"
+          matInput
+          [errorStateMatcher]=matcher
+          placeholder="Item"
+          [class.line-through]="item.value.completed"
+        >
+      </mat-form-field>
+
+      <input
+        formControlName="id"
+        type="hidden"
+      >
+    </form>
+
+    <button (click)="addItem()" mat-button type="button" class="add-item-button">
+      <mat-icon matPrefix class="add-item-icon">add</mat-icon>
+      <span>Add item</span>
+    </button>
+  </div>
+
+  <button
+    [disabled]="form.invalid || form.pristine || !(user$ | async)?.uid || !this.todo"
+    mat-raised-button
+    color="primary"
+    type="submit"
+    class="submit-button"
+  >
+    Update
+  </button>
+
+  <button
+    (click)="delete()"
+    mat-raised-button
+    type="button"
+    color="warn"
+    class="clear-button"
+  >
+    Delete
+  </button>
+</form>

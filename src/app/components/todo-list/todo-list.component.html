@@ -1,0 +1,7 @@
+<mat-selection-list [multiple]="false">
+  <a *ngFor="let todo of todos$ | async" [routerLink]="['/todo', todo.id]">
+    <mat-list-option [value]="todo.title">
+      {{ todo.title }}
+    </mat-list-option>
+  </a>
+</mat-selection-list>

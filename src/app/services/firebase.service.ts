@@ -4,7 +4,7 @@ import { Observable, from } from 'rxjs';
 import { shareReplay, switchMap } from 'rxjs/operators';
 
 import { initializeApp  } from "firebase/app"
-import { getFirestore  } from "firebase/firestore"
+import { Firestore, getFirestore  } from "firebase/firestore"
 import { getAuth, signInAnonymously, onAuthStateChanged, Auth, User  } from "firebase/auth";
 
 import { environment } from '../../environments/environment';
@@ -30,10 +30,33 @@ export class FirebaseService {
       subscriber.complete();
     }))),
     shareReplay(1)
+  )
+
+  onAuthStateChanged$ = this.auth$.pipe(
+    switchMap((auth: Auth) => {
+      return new Observable<User|null>(subscriber => {
+        const unsubscribe = onAuthStateChanged(
+          auth,
+          (user: User|null) => {
+            subscriber.next(user);
+          },
+          err => {
+            subscriber.error(err);
+          },
+          () => {
+            subscriber.complete();
+          }
+        );
+
+        return () => {
+          unsubscribe();
+        };
+      });
+    })
   );
 
   db$ = this.firebaseApp$.pipe(
-    switchMap(firebaseApp => (new Observable(subscriber => {
+    switchMap(firebaseApp => (new Observable<Firestore>(subscriber => {
       const db = getFirestore();
 
       subscriber.next(db);
@@ -43,19 +66,6 @@ export class FirebaseService {
   );
 
   constructor() { }
-
-  onAuthStateChanged() {
-    return this.auth$.pipe(
-      switchMap((auth: Auth) => {
-        return new Observable<User|null>(subscriber => {
-          onAuthStateChanged(auth, (user: User|null) => {
-            subscriber.next(user);
-            subscriber.complete();
-          })
-        });
-      })
-    );
-  }
 
   signInAnonymously() {
     return this.auth$.pipe(
