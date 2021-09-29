@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, from, of, concat, zip, throwError } from 'rxjs';
 import { switchMap, concatMap, map, tap, filter, first, ignoreElements } from 'rxjs/operators';
 
-import { Firestore, collection, doc, query, getDoc, getDocs, onSnapshot, writeBatch, serverTimestamp  } from "firebase/firestore"; 
+import { Firestore, collection, doc, query, getDoc, getDocs, deleteDoc, onSnapshot, writeBatch, serverTimestamp  } from "firebase/firestore"; 
 import { User, UserCredential } from "firebase/auth";
 
 import { FirebaseService } from './firebase.service';
@@ -277,12 +277,8 @@ export class TodosService {
   }
 
   deleteTodo(id: string) {
-    let index = this.todos.findIndex((t: Todo) => t.id === id)
-
-    if (!index) {
-      throw new Error("Todo wasn't found");
-    }
-
-    this.todos.splice(index, 1);
+    return this.firebaseService.db$.pipe(
+      switchMap(db => from(deleteDoc(doc(db, "todos", id))))
+    );
   }
 }

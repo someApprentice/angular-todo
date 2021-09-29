@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormArray, Validators } from '@angular/forms';
 
 import { Observable, Subscription, Subject, of } from 'rxjs';
@@ -28,6 +28,7 @@ import { UpdateDialogComponent } from './update-dialog/update-dialog.component';
 })
 export class TodoComponent implements OnInit {
   private unsubscribe$ = new Subject<void>();
+  private deleted$ = new Subject<void>();
 
   form = this.fb.group({
     title: ['', Validators.required],
@@ -48,6 +49,7 @@ export class TodoComponent implements OnInit {
     private firebaseService: FirebaseService,
     private todosService: TodosService,
     private route: ActivatedRoute,
+    private router: Router,
     private fb: FormBuilder,
     public dialog: MatDialog
   ) { }
@@ -81,6 +83,7 @@ export class TodoComponent implements OnInit {
 
         this.isUpdated = true;
       }),
+      takeUntil(this.deleted$),
       takeUntil(this.unsubscribe$)
     ).subscribe();
   }
@@ -163,7 +166,14 @@ export class TodoComponent implements OnInit {
   }
 
   delete() {
+    this.deleted$.next();
+    this.deleted$.complete();
 
+    this.todosService.deleteTodo(this.todo!.id!).pipe(
+      tap(() => {
+        this.router.navigate([ "/todos" ]);
+      })
+    ).subscribe();
   }
 
   // This function compares two arrays of Items for differences
