@@ -5,7 +5,7 @@ import { shareReplay, switchMap } from 'rxjs/operators';
 
 import { initializeApp  } from "firebase/app"
 import { Firestore, getFirestore  } from "firebase/firestore"
-import { getAuth, signInAnonymously, onAuthStateChanged, Auth, User  } from "firebase/auth";
+import { getAuth, signInAnonymously, onAuthStateChanged, Auth, User, setPersistence, inMemoryPersistence } from "firebase/auth";
 
 import { environment } from '../../environments/environment';
 
@@ -25,6 +25,8 @@ export class FirebaseService {
   auth$ = this.firebaseApp$.pipe(
     switchMap(firebaseApp => (new Observable<Auth>(subscriber => {
       const auth = getAuth();
+
+      setPersistence(auth, inMemoryPersistence);
 
       subscriber.next(auth);
       subscriber.complete();
